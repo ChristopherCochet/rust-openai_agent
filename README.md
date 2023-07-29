@@ -1,6 +1,6 @@
-# rust-new-project-template
-A good starting point for a new Rust project
+# rust-openai-agent project
+Coursera GPT project in Rust
 
 ## References
 
-* [rust-cli-template](https://github.com/kbknapp/rust-cli-template)
+* [auto-gipiti]([https://github.com/kbknapp/rust-cli-template](https://www.udemy.com/course/autogpt-gpt4-code-writing-ai/)https://www.udemy.com/course/autogpt-gpt4-code-writing-ai/)
