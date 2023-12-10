@@ -1,6 +1,6 @@
 use crate::models::general::llm::{ Message, ChatCompletion, APIResponse };
 use dotenv::dotenv;
-use reqwest::Client;
+use reqwest::{ Client };
 use std::env;
 use reqwest::header::{ HeaderMap, HeaderValue };
 
@@ -10,9 +10,6 @@ pub async fn call_gpt(messages: Vec<Message>) -> Result<String, Box<dyn std::err
     // Extract API key information
     let api_key: String = env::var("OPEN_AI_KEY").expect("OPEN_AI_KEY not found in env variables");
     let api_org: String = env::var("OPEN_AI_ORG").expect("OPEN_AI_ORG not found in env variables");
-
-    println!("{}",api_key);
-    println!("{}",api_org);
     
     // Confirm endpoint
     let url: &str = "https://api.openai.com/v1/chat/completions";
@@ -22,7 +19,7 @@ pub async fn call_gpt(messages: Vec<Message>) -> Result<String, Box<dyn std::err
 
     // Create api key header
     headers.insert(
-        "authorization", 
+        "Authorization",
         HeaderValue::from_str(&format!("Bearer {}", api_key))
             .map_err(|e| -> Box<dyn std::error::Error + Send> { Box::new(e) })?,
     );
@@ -42,18 +39,18 @@ pub async fn call_gpt(messages: Vec<Message>) -> Result<String, Box<dyn std::err
 
     // Create ChatCompletion
     let chat_completion = ChatCompletion {
-        model: "gpt-3.5-turbo".to_string(),
-        messages: messages,
+        model: "gpt-4".to_string(),
+        messages,
         temperature: 0.1,
     };
 
     // Troubleshooting
-    let response_raw = client
-        .post(url)
-        .json(&chat_completion)
-        .send()
-        .await
-        .unwrap();
+    // let response_raw = client
+    //     .post(url)
+    //     .json(&chat_completion)
+    //     .send()
+    //     .await
+    //     .unwrap();
 
     // Extract API Response
     let res: APIResponse = client
@@ -65,7 +62,7 @@ pub async fn call_gpt(messages: Vec<Message>) -> Result<String, Box<dyn std::err
         .json()
         .await
         .map_err(|e| -> Box<dyn std::error::Error + Send> { Box::new(e) })?;
-
+    
     // Send Response
     Ok(res.choices[0].message.content.clone())
 
@@ -76,15 +73,17 @@ pub async fn call_gpt(messages: Vec<Message>) -> Result<String, Box<dyn std::err
 mod tests {
     use super::*;
 
+    //  cargo test test_call_to_openai -- --nocapture
     #[tokio::test]
     async fn test_call_to_openai() {
         let message = Message {
             role: "user".to_string(),
-            content: "Hi there, this is a test. Giveme a short response".to_string(),
+            content: "Hi there, this is a test. Give me a short reponse.".to_string(),
         };
     
         let messages = vec![message];
         let res= call_gpt(messages).await;
+        //dbg!(&res);
         match res {
             Ok(res_str) => {
                 dbg!(res_str);
