@@ -1,11 +1,14 @@
-use crossterm::{style::{Color, ResetColor, SetForegroundColor}, ExecutableCommand};
+use crossterm::{
+    style::{Color, ResetColor, SetForegroundColor},
+    ExecutableCommand,
+};
 use std::io::{stdin, stdout};
 
 #[derive(PartialEq, Debug)]
 pub enum PrintCommand {
     AICall,
     UnitTest,
-    Issue
+    Issue,
 }
 
 impl PrintCommand {
@@ -32,7 +35,7 @@ impl PrintCommand {
 }
 
 // Get user request
-pub fn get_user_response(question : &str) -> String {
+pub fn get_user_response(question: &str) -> String {
     let mut stdout: std::io::Stdout = stdout();
 
     // Print the question in a specific colour
@@ -58,6 +61,7 @@ mod tests {
 
     #[test]
     fn tests_prints_agent_msg() {
-        PrintCommand::AICall.print_agent_message("Managing Agent", "Testing testing, processing something \n")
+        PrintCommand::AICall
+            .print_agent_message("Managing Agent", "Testing testing, processing something \n")
     }
 }

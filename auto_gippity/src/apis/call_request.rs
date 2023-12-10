@@ -1,16 +1,16 @@
-use crate::models::general::llm::{ Message, ChatCompletion, APIResponse };
+use crate::models::general::llm::{APIResponse, ChatCompletion, Message};
 use dotenv::dotenv;
-use reqwest::{ Client };
+use reqwest::header::{HeaderMap, HeaderValue};
+use reqwest::Client;
 use std::env;
-use reqwest::header::{ HeaderMap, HeaderValue };
 
-// Call LLM 
-pub async fn call_gpt(messages: Vec<Message>) -> Result<String, Box<dyn std::error::Error + Send>>  {
+// Call LLM
+pub async fn call_gpt(messages: Vec<Message>) -> Result<String, Box<dyn std::error::Error + Send>> {
     dotenv().ok();
     // Extract API key information
     let api_key: String = env::var("OPEN_AI_KEY").expect("OPEN_AI_KEY not found in env variables");
     let api_org: String = env::var("OPEN_AI_ORG").expect("OPEN_AI_ORG not found in env variables");
-    
+
     // Confirm endpoint
     let url: &str = "https://api.openai.com/v1/chat/completions";
 
@@ -26,9 +26,9 @@ pub async fn call_gpt(messages: Vec<Message>) -> Result<String, Box<dyn std::err
 
     // Create Open AI Org header
     headers.insert(
-        "OpenAI-Organization", 
+        "OpenAI-Organization",
         HeaderValue::from_str(api_org.as_str())
-        .map_err(|e| -> Box<dyn std::error::Error + Send> { Box::new(e) })?,
+            .map_err(|e| -> Box<dyn std::error::Error + Send> { Box::new(e) })?,
     );
 
     //Create Client
@@ -62,12 +62,10 @@ pub async fn call_gpt(messages: Vec<Message>) -> Result<String, Box<dyn std::err
         .json()
         .await
         .map_err(|e| -> Box<dyn std::error::Error + Send> { Box::new(e) })?;
-    
+
     // Send Response
     Ok(res.choices[0].message.content.clone())
-
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -80,9 +78,9 @@ mod tests {
             role: "user".to_string(),
             content: "Hi there, this is a test. Give me a short reponse.".to_string(),
         };
-    
+
         let messages = vec![message];
-        let res= call_gpt(messages).await;
+        let res = call_gpt(messages).await;
         //dbg!(&res);
         match res {
             Ok(res_str) => {
@@ -93,6 +91,5 @@ mod tests {
                 assert!(false);
             }
         }
-
     }
 }
